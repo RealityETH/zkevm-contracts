@@ -30,11 +30,6 @@ describe('PolygonZkEVMBridge Mock Contract', () => {
     );
     const gasTokenName = 'Fork Token';
     const gasTokenSymbol = 'FORK';
-    const metadataGasToken = ethers.utils.defaultAbiCoder.encode(
-        ['string', 'string', 'uint8'],
-        [gasTokenName, gasTokenSymbol, decimals],
-    );
-
 
     const networkIDMainnet = 0;
     const networkIDRollup = 1;
@@ -46,15 +41,15 @@ describe('PolygonZkEVMBridge Mock Contract', () => {
         // load signers
         [deployer, rollup, acc1] = await ethers.getSigners();
 
-           // deploy gas token
-           const gasTokenFactory = await ethers.getContractFactory('ERC20PermitMock');
-           gasTokenContract = await gasTokenFactory.deploy(
-               gasTokenName,
-               gasTokenSymbol,
-               deployer.address,
-               tokenInitialBalance,
-           );
-           await gasTokenContract.deployed();
+        // deploy gas token
+        const gasTokenFactory = await ethers.getContractFactory('ERC20PermitMock');
+        gasTokenContract = await gasTokenFactory.deploy(
+            gasTokenName,
+            gasTokenSymbol,
+            deployer.address,
+            tokenInitialBalance,
+        );
+        await gasTokenContract.deployed();
 
         // deploy global exit root manager
         const PolygonZkEVMGlobalExitRootFactory = await ethers.getContractFactory('PolygonZkEVMGlobalExitRootMock');
@@ -64,7 +59,13 @@ describe('PolygonZkEVMBridge Mock Contract', () => {
         polygonZkEVMBridgeContract = await upgrades.deployProxy(polygonZkEVMBridgeFactory, [], { initializer: false });
 
         polygonZkEVMGlobalExitRoot = await PolygonZkEVMGlobalExitRootFactory.deploy(rollup.address, polygonZkEVMBridgeContract.address);
-        await polygonZkEVMBridgeContract.initialize(networkIDMainnet, polygonZkEVMGlobalExitRoot.address, polygonZkEVMAddress, gasTokenContract.address, true);
+        await polygonZkEVMBridgeContract.initialize(
+            networkIDMainnet,
+            polygonZkEVMGlobalExitRoot.address,
+            polygonZkEVMAddress,
+            gasTokenContract.address,
+            true,
+        );
 
         // deploy token
         const maticTokenFactory = await ethers.getContractFactory('ERC20PermitMock');

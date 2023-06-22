@@ -61,7 +61,13 @@ describe('PolygonZkEVMBridge Contract', () => {
         const PolygonZkEVMGlobalExitRootFactory = await ethers.getContractFactory('PolygonZkEVMGlobalExitRoot');
         polygonZkEVMGlobalExitRoot = await PolygonZkEVMGlobalExitRootFactory.deploy(rollup.address, polygonZkEVMBridgeContract.address);
 
-        await polygonZkEVMBridgeContract.initialize(networkIDMainnet, polygonZkEVMGlobalExitRoot.address, polygonZkEVMAddress, gasTokenContract.address, true);
+        await polygonZkEVMBridgeContract.initialize(
+            networkIDMainnet,
+            polygonZkEVMGlobalExitRoot.address,
+            polygonZkEVMAddress,
+            gasTokenContract.address,
+            true,
+        );
 
         // deploy token
         const maticTokenFactory = await ethers.getContractFactory('ERC20PermitMock');
@@ -312,7 +318,6 @@ describe('PolygonZkEVMBridge Contract', () => {
 
         expect(await polygonZkEVMBridgeContract.lastUpdatedDepositCount()).to.be.equal(2);
         expect(await polygonZkEVMGlobalExitRoot.lastMainnetExitRoot()).to.not.be.equal(rootJSMainnet);
-
     });
 
     it('should claim tokens from Mainnet to Mainnet', async () => {
@@ -1046,7 +1051,7 @@ describe('PolygonZkEVMBridge Contract', () => {
             networkIDRollup,
             destinationAddress,
             amount,
-            ethers.constants.AddressZero, 
+            ethers.constants.AddressZero,
             true,
             '0x',
         )).to.be.revertedWith('AmountDoesNotMatchMsgValue');
@@ -1062,7 +1067,7 @@ describe('PolygonZkEVMBridge Contract', () => {
             { value: amount },
         )).to.be.revertedWith('DestinationNetworkInvalid');
 
-         // make ether available in the contract
+        // make ether available in the contract
         expect(await polygonZkEVMBridgeContract.bridgeAsset(
             networkIDRollup,
             destinationAddress,
@@ -1070,10 +1075,8 @@ describe('PolygonZkEVMBridge Contract', () => {
             ethers.constants.AddressZero,
             true,
             '0x',
-            { value: amount},
+            { value: amount },
         ));
-        
-       
 
         // Check balances before claim
         expect(await ethers.provider.getBalance(polygonZkEVMBridgeContract.address)).to.be.equal(amount);
@@ -1085,7 +1088,7 @@ describe('PolygonZkEVMBridge Contract', () => {
             mainnetExitRoot,
             rollupExitRootSC,
             originNetwork,
-            ethers.constants.AddressZero,   
+            ethers.constants.AddressZero,
             destinationNetwork,
             destinationAddress,
             amount,

@@ -22,7 +22,6 @@ describe('Emergency mode test', () => {
     const gasTokenSymbol = 'FORK';
     const gasTokenInitialBalance = ethers.utils.parseEther('20000000');
 
-
     const genesisRoot = '0x0000000000000000000000000000000000000000000000000000000000000001';
 
     const networkIDMainnet = 0;
@@ -40,15 +39,15 @@ describe('Emergency mode test', () => {
         // load signers
         [deployer, trustedAggregator, trustedSequencer, admin] = await ethers.getSigners();
 
-          // deploy gas token
-          const gasTokenFactory = await ethers.getContractFactory('ERC20PermitMock');
-          gasTokenContract = await gasTokenFactory.deploy(
-              gasTokenName,
-              gasTokenSymbol,
-              deployer.address,
-              gasTokenInitialBalance,
-          );
-          await gasTokenContract.deployed();
+        // deploy gas token
+        const gasTokenFactory = await ethers.getContractFactory('ERC20PermitMock');
+        gasTokenContract = await gasTokenFactory.deploy(
+            gasTokenName,
+            gasTokenSymbol,
+            deployer.address,
+            gasTokenInitialBalance,
+        );
+        await gasTokenContract.deployed();
 
         // deploy mock verifier
         const VerifierRollupHelperFactory = await ethers.getContractFactory(
@@ -111,7 +110,13 @@ describe('Emergency mode test', () => {
         expect(precalculateBridgeAddress).to.be.equal(polygonZkEVMBridgeContract.address);
         expect(precalculateZkevmAddress).to.be.equal(polygonZkEVMContract.address);
 
-        await polygonZkEVMBridgeContract.initialize(networkIDMainnet, polygonZkEVMGlobalExitRoot.address, polygonZkEVMContract.address, gasTokenContract.address, true);
+        await polygonZkEVMBridgeContract.initialize(
+            networkIDMainnet,
+            polygonZkEVMGlobalExitRoot.address,
+            polygonZkEVMContract.address,
+            gasTokenContract.address,
+            true,
+        );
         await polygonZkEVMContract.initialize(
             {
                 admin: admin.address,
