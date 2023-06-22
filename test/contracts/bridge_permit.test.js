@@ -25,12 +25,20 @@ describe('PolygonZkEVMBridge Contract Permit tests', () => {
     let polygonZkEVMGlobalExitRoot;
     let polygonZkEVMBridgeContract;
     let tokenContract;
+    let gasTokenContract;
 
     const tokenName = 'Matic Token';
     const tokenSymbol = 'MATIC';
     const decimals = 18;
     const tokenInitialBalance = ethers.utils.parseEther('20000000');
     const metadataToken = ethers.utils.defaultAbiCoder.encode(
+        ['string', 'string', 'uint8'],
+        [tokenName, tokenSymbol, decimals],
+    );
+
+    const gasTokenName = 'Fork Token';
+    const gasTokenSymbol = 'FORK';
+    const metadataGasToken = ethers.utils.defaultAbiCoder.encode(
         ['string', 'string', 'uint8'],
         [tokenName, tokenSymbol, decimals],
     );
@@ -45,6 +53,16 @@ describe('PolygonZkEVMBridge Contract Permit tests', () => {
         // load signers
         [deployer, rollup] = await ethers.getSigners();
 
+         // deploy gas token
+         const gasTokenFactory = await ethers.getContractFactory('ERC20PermitMock');
+         gasTokenContract = await gasTokenFactory.deploy(
+             gasTokenName,
+             gasTokenSymbol,
+             deployer.address,
+             tokenInitialBalance,
+         );
+         await gasTokenContract.deployed();
+
         // deploy PolygonZkEVMBridge
         const polygonZkEVMBridgeFactory = await ethers.getContractFactory('PolygonZkEVMBridge');
         polygonZkEVMBridgeContract = await upgrades.deployProxy(polygonZkEVMBridgeFactory, [], { initializer: false });
@@ -53,7 +71,7 @@ describe('PolygonZkEVMBridge Contract Permit tests', () => {
         const polygonZkEVMGlobalExitRootFactory = await ethers.getContractFactory('PolygonZkEVMGlobalExitRoot');
         polygonZkEVMGlobalExitRoot = await polygonZkEVMGlobalExitRootFactory.deploy(rollup.address, polygonZkEVMBridgeContract.address);
 
-        await polygonZkEVMBridgeContract.initialize(networkIDMainnet, polygonZkEVMGlobalExitRoot.address, polygonZkEVMAddress);
+        await polygonZkEVMBridgeContract.initialize(networkIDMainnet, polygonZkEVMGlobalExitRoot.address, polygonZkEVMAddress, gasTokenContract.address, true);
 
         // deploy token
         const maticTokenFactory = await ethers.getContractFactory('TokenWrapped');

@@ -47,6 +47,16 @@ contract PolygonZkEVMBridge is
     // Leaf type message
     uint8 private constant _LEAF_TYPE_MESSAGE = 1;
 
+    // gas token for L2
+    address public gasTokenAddress;
+
+    // flag to indicate if the contract is deployed on L2
+    // This is needed, as the logic for the L2 deployment is different
+    // On L2: We pay out ether and allow deposits in ether
+    // On L1: We  allow deposits in gasTokenAddress that will be used
+    // to pay out ether on L2
+    bool public isDeployedOnL2;
+
     // Network identifier
     uint32 public networkID;
 
@@ -78,11 +88,15 @@ contract PolygonZkEVMBridge is
     function initialize(
         uint32 _networkID,
         IBasePolygonZkEVMGlobalExitRoot _globalExitRootManager,
-        address _polygonZkEVMaddress
+        address _polygonZkEVMaddress,
+        address _gasTokenAddress,
+        bool _isDeployedOnL2
     ) external virtual initializer {
         networkID = _networkID;
         globalExitRootManager = _globalExitRootManager;
         polygonZkEVMaddress = _polygonZkEVMaddress;
+        gasTokenAddress = _gasTokenAddress;
+        isDeployedOnL2 = _isDeployedOnL2;
 
         // Initialize OZ contracts
         __ReentrancyGuard_init();
@@ -159,12 +173,12 @@ contract PolygonZkEVMBridge is
         bytes memory metadata;
         uint256 leafAmount = amount;
 
-        if (token == address(0)) {
+        if (token == address(0) && isDeployedOnL2) {
             // Ether transfer
             if (msg.value != amount) {
                 revert AmountDoesNotMatchMsgValue();
             }
-
+            originTokenAddress = gasTokenAddress;
             // Ether is treated as ether from mainnet
             originNetwork = _MAINNET_NETWORK_ID;
         } else {
@@ -205,7 +219,11 @@ contract PolygonZkEVMBridge is
                 // Override leafAmount with the received amount
                 leafAmount = balanceAfter - balanceBefore;
 
-                originTokenAddress = token;
+                if (token == gasTokenAddress) {
+                    originTokenAddress = address(0);
+                } else {
+                    originTokenAddress = token;
+                }
                 originNetwork = networkID;
 
                 // Encode metadata
@@ -337,7 +355,7 @@ contract PolygonZkEVMBridge is
 
         // Transfer funds
         if (originTokenAddress == address(0)) {
-            // Transfer ether
+            // Transfer gasTokenAddress as native asset
             /* solhint-disable avoid-low-level-calls */
             (bool success, ) = destinationAddress.call{value: amount}(
                 new bytes(0)
