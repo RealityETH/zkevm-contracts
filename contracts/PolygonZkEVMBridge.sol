@@ -386,7 +386,8 @@ contract PolygonZkEVMBridge is
         );
     }
 
-    function issueBridgedTokens(uint32 originNetwork, address originTokenAddress, bytes memory metadata, address destinationAddress, uint256 amount) internal {
+    function issueBridgedTokens(uint32 originNetwork, address originTokenAddress, 
+        bytes memory metadata, address destinationAddress, uint256 amount) internal {
         // Create a wrapper for the token if not exist yet
         bytes32 tokenInfoHash = keccak256(
             abi.encodePacked(originNetwork, originTokenAddress)
