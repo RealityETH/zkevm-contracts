@@ -377,7 +377,7 @@ contract PolygonZkEVM is
         IPolygonZkEVMBridge _bridgeAddress,
         uint64 _chainID,
         uint64 _forkID
-    ) external initializer {
+    ) public initializer {
         globalExitRootManager = _globalExitRootManager;
         matic = _matic;
         rollupVerifier = _rollupVerifier;

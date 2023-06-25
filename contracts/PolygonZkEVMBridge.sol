@@ -91,7 +91,7 @@ contract PolygonZkEVMBridge is
         address _polygonZkEVMaddress,
         address _gasTokenAddress,
         bool _isDeployedOnL2
-    ) external virtual initializer {
+    ) public virtual initializer {
         networkID = _networkID;
         globalExitRootManager = _globalExitRootManager;
         polygonZkEVMaddress = _polygonZkEVMaddress;
