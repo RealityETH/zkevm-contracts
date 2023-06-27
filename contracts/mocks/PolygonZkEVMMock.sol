@@ -120,7 +120,7 @@ contract PolygonZkEVMMock is PolygonZkEVM {
     function setStateRoot(
         bytes32 newStateRoot,
         uint64 batchNum
-    ) public onlyOwner {
+    ) public  {
         batchNumToStateRoot[batchNum] = newStateRoot;
     }
 
@@ -128,7 +128,7 @@ contract PolygonZkEVMMock is PolygonZkEVM {
      * @notice Set Sequencer
      * @param _numBatch New verifier
      */
-    function setVerifiedBatch(uint64 _numBatch) public onlyOwner {
+    function setVerifiedBatch(uint64 _numBatch) public  {
         lastVerifiedBatch = _numBatch;
     }
 
@@ -136,7 +136,7 @@ contract PolygonZkEVMMock is PolygonZkEVM {
      * @notice Set Sequencer
      * @param _numBatch New verifier
      */
-    function setSequencedBatch(uint64 _numBatch) public onlyOwner {
+    function setSequencedBatch(uint64 _numBatch) public {
         lastBatchSequenced = _numBatch;
     }
 
@@ -144,7 +144,7 @@ contract PolygonZkEVMMock is PolygonZkEVM {
      * @notice Set network name
      * @param _networkName New verifier
      */
-    function setNetworkName(string memory _networkName) public onlyOwner {
+    function setNetworkName(string memory _networkName) public {
         networkName = _networkName;
     }
 
@@ -152,7 +152,7 @@ contract PolygonZkEVMMock is PolygonZkEVM {
      * @notice Update fee mock function
      * @param newLastVerifiedBatch New last verified batch
      */
-    function updateBatchFee(uint64 newLastVerifiedBatch) public onlyOwner {
+    function updateBatchFee(uint64 newLastVerifiedBatch) public  {
         _updateBatchFee(newLastVerifiedBatch);
     }
 
@@ -166,7 +166,7 @@ contract PolygonZkEVMMock is PolygonZkEVM {
         bytes32 accInputData,
         uint64 timestamp,
         uint64 lastPendingStateConsolidated
-    ) public onlyOwner {
+    ) public {
         sequencedBatches[batchNum] = SequencedBatchData({
             accInputHash: accInputData,
             sequencedTimestamp: timestamp,
@@ -193,7 +193,7 @@ contract PolygonZkEVMMock is PolygonZkEVM {
         uint256[2] calldata proofA,
         uint256[2][2] calldata proofB,
         uint256[2] calldata proofC
-    ) public onlyOwner {
+    ) public  {
         bytes32 oldStateRoot;
         uint64 currentLastVerifiedBatch = getLastVerifiedBatch();
 

@@ -2,9 +2,9 @@
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./interfaces/IVerifierRollup.sol";
 import "./interfaces/IPolygonZkEVMGlobalExitRoot.sol";
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./lib/EmergencyManager.sol";
 import "./interfaces/IPolygonZkEVMErrors.sol";
 import "./interfaces/IPolygonZkEVM.sol";
@@ -19,7 +19,7 @@ import "./interfaces/IPolygonZkEVMBridge.sol";
  * To enter and exit of the L2 network will be used a PolygonZkEVMBridge smart contract that will be deployed in both networks.
  */
 contract PolygonZkEVM is
-    OwnableUpgradeable,
+    Initializable,
     EmergencyManager,
     IPolygonZkEVMErrors,
     IPolygonZkEVM
@@ -416,9 +416,6 @@ contract PolygonZkEVM is
         multiplierBatchFee = 1002;
         forceBatchTimeout = 5 days;
         isForcedBatchDisallowed = true;
-
-        // Initialize OZ contracts
-        __Ownable_init_unchained();
 
         // emit version event
         emit UpdateZkEVMVersion(0, forkID, _version);
@@ -1506,7 +1503,7 @@ contract PolygonZkEVM is
      * @param sequencedBatchNum Sequenced batch number that has not been aggreagated in _HALT_AGGREGATION_TIMEOUT
      */
     function activateEmergencyState(uint64 sequencedBatchNum) external {
-        if (msg.sender != owner()) {
+        if (msg.sender != admin) {
             // Only check conditions if is not called by the owner
             uint64 currentLastVerifiedBatch = getLastVerifiedBatch();
 

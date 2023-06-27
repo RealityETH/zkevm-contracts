@@ -150,7 +150,6 @@ describe('Polygon ZK-EVM', () => {
         expect(await polygonZkEVMContract.rollupVerifier()).to.be.equal(verifierContract.address);
         expect(await polygonZkEVMContract.bridgeAddress()).to.be.equal(polygonZkEVMBridgeContract.address);
 
-        expect(await polygonZkEVMContract.owner()).to.be.equal(deployer.address);
         expect(await polygonZkEVMContract.admin()).to.be.equal(admin.address);
         expect(await polygonZkEVMContract.chainID()).to.be.equal(chainID);
         expect(await polygonZkEVMContract.trustedSequencer()).to.be.equal(trustedSequencer.address);

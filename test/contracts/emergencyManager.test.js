@@ -74,7 +74,7 @@ describe('Emergency mode test', () => {
             firstDeployment = false;
         }
 
-        const nonceProxyBridge = Number((await ethers.provider.getTransactionCount(deployer.address))) + (firstDeployment ? 2 : 1);
+        const nonceProxyBridge = Number((await ethers.provider.getTransactionCount(deployer.address))) + (firstDeployment ? 2 :3);
         const nonceProxyZkevm = nonceProxyBridge + 2; // Always have to redeploy impl since the polygonZkEVMGlobalExitRoot address changes
 
         const precalculateBridgeAddress = ethers.utils.getContractAddress({ from: deployer.address, nonce: nonceProxyBridge });
@@ -148,13 +148,13 @@ describe('Emergency mode test', () => {
             .to.be.revertedWith('OnlyEmergencyState');
 
         // Set isEmergencyState
-        await expect(polygonZkEVMContract.connect(admin).activateEmergencyState(1))
+        await expect(polygonZkEVMContract.activateEmergencyState(1))
             .to.be.revertedWith('BatchNotSequencedOrNotSequenceEnd');
 
         await expect(polygonZkEVMBridgeContract.connect(deployer).activateEmergencyState())
             .to.be.revertedWith('OnlyPolygonZkEVM');
 
-        await expect(polygonZkEVMContract.activateEmergencyState(0))
+        await expect(polygonZkEVMContract.connect(admin).activateEmergencyState(0))
             .to.emit(polygonZkEVMContract, 'EmergencyStateActivated')
             .to.emit(polygonZkEVMBridgeContract, 'EmergencyStateActivated');
 
@@ -260,7 +260,7 @@ describe('Emergency mode test', () => {
         )).to.be.revertedWith('OnlyNotEmergencyState');
 
         // Emergency council should deactivate emergency mode
-        await expect(polygonZkEVMContract.activateEmergencyState(0))
+        await expect(polygonZkEVMContract.connect(admin).activateEmergencyState(0))
             .to.be.revertedWith('OnlyNotEmergencyState');
 
         await expect(polygonZkEVMBridgeContract.connect(deployer).deactivateEmergencyState())
@@ -268,7 +268,7 @@ describe('Emergency mode test', () => {
 
         await expect(polygonZkEVMContract.deactivateEmergencyState())
             .to.be.revertedWith('OnlyAdmin');
-
+        
         await expect(polygonZkEVMContract.connect(admin).deactivateEmergencyState())
             .to.emit(polygonZkEVMContract, 'EmergencyStateDeactivated')
             .to.emit(polygonZkEVMBridgeContract, 'EmergencyStateDeactivated');
