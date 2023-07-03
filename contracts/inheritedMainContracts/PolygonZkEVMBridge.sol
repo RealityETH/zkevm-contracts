@@ -2,15 +2,15 @@
 
 pragma solidity 0.8.17;
 
-import "./lib/DepositContract.sol";
+import "../lib/DepositContract.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "./lib/TokenWrapped.sol";
-import "./interfaces/IBasePolygonZkEVMGlobalExitRoot.sol";
-import "./interfaces/IBridgeMessageReceiver.sol";
-import "./interfaces/IPolygonZkEVMBridge.sol";
+import "../lib/TokenWrapped.sol";
+import "../interfaces/IBasePolygonZkEVMGlobalExitRoot.sol";
+import "../interfaces/IBridgeMessageReceiver.sol";
+import "../interfaces/IPolygonZkEVMBridge.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
-import "./lib/EmergencyManager.sol";
-import "./lib/GlobalExitRootLib.sol";
+import "../lib/EmergencyManager.sol";
+import "../lib/GlobalExitRootLib.sol";
 
 /**
  * PolygonZkEVMBridge that will be deployed on both networks Ethereum and Polygon zkEVM
@@ -91,7 +91,7 @@ contract PolygonZkEVMBridge is
         address _polygonZkEVMaddress,
         address _gasTokenAddress,
         bool _isDeployedOnL2
-    ) public virtual initializer {
+    ) public virtual onlyInitializing {
         networkID = _networkID;
         globalExitRootManager = _globalExitRootManager;
         polygonZkEVMaddress = _polygonZkEVMaddress;
@@ -741,7 +741,7 @@ contract PolygonZkEVMBridge is
             // we call without checking the result, in case it fails and he doesn't have enough balance
             // the following transferFrom should be fail. This prevents DoS attacks from using a signature
             // before the smartcontract call
-            /* solhint-disable avoid-low-level-calls */
+            /* solhint-disable avoid-low-level-calls,  */
             address(token).call(
                 abi.encodeWithSelector(
                     _PERMIT_SIGNATURE,

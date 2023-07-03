@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity 0.8.17;
-import "../PolygonZkEVMBridge.sol";
+import "../PolygonZkEVMBridgeWrapper.sol";
 
 /**
  * PolygonZkEVMBridge that will be deployed on both networks Ethereum and Polygon zkEVM
  * Contract responsible to manage the token interactions with other networks
  */
-contract PolygonZkEVMBridgeMock is PolygonZkEVMBridge {
+contract PolygonZkEVMBridgeMock is PolygonZkEVMBridgeWrapper {
     uint256 public maxEtherBridge;
 
     /**

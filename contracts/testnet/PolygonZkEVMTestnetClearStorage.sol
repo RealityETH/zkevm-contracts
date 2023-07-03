@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity 0.8.17;
 
-import "../PolygonZkEVM.sol";
+import "../inheritedMainContracts/PolygonZkEVM.sol";
 
 /**
  * Contract responsible for managing the state and the updates of the L2 network
