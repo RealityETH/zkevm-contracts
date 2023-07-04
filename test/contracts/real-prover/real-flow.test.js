@@ -126,6 +126,8 @@ describe('Real flow test', () => {
                 pendingStateTimeout: pendingStateTimeoutDefault,
                 trustedAggregator: trustedAggregator.address,
                 trustedAggregatorTimeout: trustedAggregatorTimeoutDefault,
+                chainID,
+                forkID,
             },
             genesisRoot,
             urlSequencer,

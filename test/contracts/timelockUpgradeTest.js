@@ -126,6 +126,8 @@ describe('Polygon ZK-EVM', () => {
                 pendingStateTimeout: pendingStateTimeoutDefault,
                 trustedAggregator: trustedAggregator.address,
                 trustedAggregatorTimeout: trustedAggregatorTimeoutDefault,
+                chainID,
+                forkID: 0,
             },
             genesisRoot,
             urlSequencer,
