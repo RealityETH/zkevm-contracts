@@ -57,12 +57,12 @@ describe('Polygon ZK-EVM TestnetV2', () => {
          * In order to not have trouble with nonce deploy first proxy admin
          */
         await upgrades.deployProxyAdmin();
-        if ((await upgrades.admin.getInstance()).address !== '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0') {
+        if ((await upgrades.admin.getInstance()).address !== '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512') {
             firstDeployment = false;
         }
-        const nonceProxyBridge = Number((await ethers.provider.getTransactionCount(deployer.address))) + (firstDeployment ? 3 : 2);
-        const nonceProxyZkevm = nonceProxyBridge + 2; // Always have to redeploy impl since the polygonZkEVMGlobalExitRoot address changes
-
+        const nonceProxyBridge = Number((await ethers.provider.getTransactionCount(deployer.address))) + (firstDeployment ? 2 : 2);
+        // Always have to redeploy impl since the polygonZkEVMGlobalExitRoot address changes
+        const nonceProxyZkevm = nonceProxyBridge + +(firstDeployment ? 2 : 1);
         const precalculateBridgeAddress = ethers.utils.getContractAddress({ from: deployer.address, nonce: nonceProxyBridge });
         const precalculateZkevmAddress = ethers.utils.getContractAddress({ from: deployer.address, nonce: nonceProxyZkevm });
         firstDeployment = false;
@@ -82,14 +82,7 @@ describe('Polygon ZK-EVM TestnetV2', () => {
         const PolygonZkEVMFactory = await ethers.getContractFactory('PolygonZkEVMTestnetV2');
         polygonZkEVMContract = await upgrades.deployProxy(PolygonZkEVMFactory, [], {
             initializer: false,
-            constructorArgs: [
-                polygonZkEVMGlobalExitRoot.address,
-                maticTokenContract.address,
-                verifierContract.address,
-                polygonZkEVMBridgeContract.address,
-                chainID,
-                forkID,
-            ],
+            constructorArgs: [],
             unsafeAllow: ['constructor', 'state-variable-immutable'],
         });
 
@@ -109,6 +102,12 @@ describe('Polygon ZK-EVM TestnetV2', () => {
             urlSequencer,
             networkName,
             version,
+            polygonZkEVMGlobalExitRoot.address,
+            maticTokenContract.address,
+            verifierContract.address,
+            polygonZkEVMBridgeContract.address,
+            chainID,
+            forkID,
         );
 
         // fund sequencer address with Matic tokens

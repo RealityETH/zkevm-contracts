@@ -70,8 +70,8 @@ describe('Polygon ZK-EVM', () => {
         if ((await upgrades.admin.getInstance()).address !== '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0') {
             firstDeployment = false;
         }
-        const nonceProxyBridge = Number((await ethers.provider.getTransactionCount(deployer.address))) + (firstDeployment ? 3 : 2);
-        const nonceProxyZkevm = nonceProxyBridge + 2; // Always have to redeploy impl since the polygonZkEVMGlobalExitRoot address changes
+        const nonceProxyBridge = Number((await ethers.provider.getTransactionCount(deployer.address))) + (firstDeployment ? 2 : 2);
+        const nonceProxyZkevm = nonceProxyBridge + 1; // Always have to redeploy impl since the polygonZkEVMGlobalExitRoot address changes
 
         const precalculateBridgeAddress = ethers.utils.getContractAddress({ from: deployer.address, nonce: nonceProxyBridge });
         const precalculateZkevmAddress = ethers.utils.getContractAddress({ from: deployer.address, nonce: nonceProxyZkevm });
@@ -92,17 +92,9 @@ describe('Polygon ZK-EVM', () => {
         const PolygonZkEVMFactory = await ethers.getContractFactory('PolygonZkEVMMock');
         polygonZkEVMContract = await upgrades.deployProxy(PolygonZkEVMFactory, [], {
             initializer: false,
-            constructorArgs: [
-                polygonZkEVMGlobalExitRoot.address,
-                maticTokenContract.address,
-                verifierContract.address,
-                polygonZkEVMBridgeContract.address,
-                chainID,
-                forkID,
-            ],
+            constructorArgs: [],
             unsafeAllow: ['constructor', 'state-variable-immutable'],
         });
-
         expect(precalculateBridgeAddress).to.be.equal(polygonZkEVMBridgeContract.address);
         expect(precalculateZkevmAddress).to.be.equal(polygonZkEVMContract.address);
 
@@ -119,6 +111,12 @@ describe('Polygon ZK-EVM', () => {
             urlSequencer,
             networkName,
             version,
+            polygonZkEVMGlobalExitRoot.address,
+            maticTokenContract.address,
+            verifierContract.address,
+            polygonZkEVMBridgeContract.address,
+            chainID,
+            forkID,
         );
 
         // fund sequencer address with Matic tokens
@@ -156,12 +154,7 @@ describe('Polygon ZK-EVM', () => {
         const polygonZkEVMContractInitialize = await upgrades.deployProxy(PolygonZkEVMFactory, [], {
             initializer: false,
             constructorArgs: [
-                polygonZkEVMGlobalExitRoot.address,
-                maticTokenContract.address,
-                verifierContract.address,
-                polygonZkEVMBridgeContract.address,
-                chainID,
-                forkID,
+
             ],
             unsafeAllow: ['constructor', 'state-variable-immutable'],
         });
@@ -178,6 +171,12 @@ describe('Polygon ZK-EVM', () => {
             urlSequencer,
             networkName,
             version,
+            polygonZkEVMGlobalExitRoot.address,
+            maticTokenContract.address,
+            verifierContract.address,
+            polygonZkEVMBridgeContract.address,
+            chainID,
+            forkID,
         )).to.be.revertedWith('PendingStateTimeoutExceedHaltAggregationTimeout');
 
         await expect(polygonZkEVMContractInitialize.initialize(
@@ -192,6 +191,12 @@ describe('Polygon ZK-EVM', () => {
             urlSequencer,
             networkName,
             version,
+            polygonZkEVMGlobalExitRoot.address,
+            maticTokenContract.address,
+            verifierContract.address,
+            polygonZkEVMBridgeContract.address,
+            chainID,
+            forkID,
         )).to.be.revertedWith('TrustedAggregatorTimeoutExceedHaltAggregationTimeout');
 
         await expect(
@@ -207,6 +212,12 @@ describe('Polygon ZK-EVM', () => {
                 urlSequencer,
                 networkName,
                 version,
+                polygonZkEVMGlobalExitRoot.address,
+                maticTokenContract.address,
+                verifierContract.address,
+                polygonZkEVMBridgeContract.address,
+                chainID,
+                forkID,
             ),
         ).to.emit(polygonZkEVMContractInitialize, 'UpdateZkEVMVersion').withArgs(0, forkID, version);
     });
