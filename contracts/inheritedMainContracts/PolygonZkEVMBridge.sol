@@ -730,7 +730,7 @@ contract PolygonZkEVMBridge is
             // we call without checking the result, in case it fails and he doesn't have enough balance
             // the following transferFrom should be fail. This prevents DoS attacks from using a signature
             // before the smartcontract call
-            /* solhint-disable avoid-low-level-calls  */
+            /* solhint-disable avoid-low-level-calls */
             address(token).call(
                 abi.encodeWithSelector(
                     _PERMIT_SIGNATURE,
