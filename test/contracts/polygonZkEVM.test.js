@@ -71,7 +71,7 @@ describe('Polygon ZK-EVM', () => {
             firstDeployment = false;
         }
         const nonceProxyBridge = Number((await ethers.provider.getTransactionCount(deployer.address))) + (firstDeployment ? 3 : 2);
-        const nonceProxyZkevm = nonceProxyBridge + (firstDeployment ? 2 : 1); // Always have to redeploy impl since the polygonZkEVMGlobalExitRoot address changes
+        const nonceProxyZkevm = nonceProxyBridge + (firstDeployment ? 2 : 1);
 
         const precalculateBridgeAddress = ethers.utils.getContractAddress({ from: deployer.address, nonce: nonceProxyBridge });
         const precalculateZkevmAddress = ethers.utils.getContractAddress({ from: deployer.address, nonce: nonceProxyZkevm });

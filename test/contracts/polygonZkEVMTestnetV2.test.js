@@ -61,7 +61,7 @@ describe('Polygon ZK-EVM TestnetV2', () => {
         if ((await upgrades.admin.getInstance()).address !== '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0') {
             firstDeployment = false;
         }
-        const nonceProxyBridge = Number((await ethers.provider.getTransactionCount(deployer.address))) +  (firstDeployment ? 3 : 2);
+        const nonceProxyBridge = Number((await ethers.provider.getTransactionCount(deployer.address))) + (firstDeployment ? 3 : 2);
         const nonceProxyZkevm = nonceProxyBridge + (doesNeedImplementationDeployment ? 2 : 1);
         const precalculateBridgeAddress = ethers.utils.getContractAddress({ from: deployer.address, nonce: nonceProxyBridge });
         const precalculateZkevmAddress = ethers.utils.getContractAddress({ from: deployer.address, nonce: nonceProxyZkevm });
