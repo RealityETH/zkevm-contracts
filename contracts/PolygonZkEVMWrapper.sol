@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0
-pragma solidity 0.8.17;
+pragma solidity 0.8.20;
 
 import "./inheritedMainContracts/PolygonZkEVM.sol";
 
@@ -33,7 +33,7 @@ contract PolygonZkEVMWrapper is PolygonZkEVM{
         uint64 finalNewBatch,
         bytes32 newLocalExitRoot,
         bytes32 newStateRoot,
-        bytes calldata proof
+        bytes32[24] calldata proof
     ) public override onlyTrustedAggregator {
         PolygonZkEVM.verifyBatchesTrustedAggregator(
             pendingStateNum,
@@ -59,7 +59,7 @@ contract PolygonZkEVMWrapper is PolygonZkEVM{
         uint64 finalNewBatch,
         bytes32 newLocalExitRoot,
         bytes32 newStateRoot,
-        bytes calldata proof
+        bytes32[24] calldata proof
     ) public override ifNotEmergencyState {
         PolygonZkEVM.verifyBatches(
             pendingStateNum,
