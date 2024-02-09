@@ -36,6 +36,7 @@ describe('Polygon ZK-EVM snark stark input test', () => {
                 trustedAggregatorTimeout: 0,
                 chainID,
                 forkID: 0,
+                lastVerifiedBatch: 0,
             },
             genesisRoot,
             urlSequencer,

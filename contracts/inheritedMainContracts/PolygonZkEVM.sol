@@ -386,6 +386,8 @@ contract PolygonZkEVM is
         batchNumToStateRoot[0] = genesisRoot;
         trustedSequencerURL = _trustedSequencerURL;
         networkName = _networkName;
+        lastBatchSequenced = initializePackedParameters.lastVerifiedBatch;
+        lastVerifiedBatch = initializePackedParameters.lastVerifiedBatch;
 
         // Check initialize parameters
         if (

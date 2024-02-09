@@ -75,7 +75,7 @@ describe('Emergency mode test', () => {
             firstDeployment = false;
         }
 
-        const nonceProxyBridge = Number((await ethers.provider.getTransactionCount(deployer.address))) + (firstDeployment ? 2 : 1);
+        const nonceProxyBridge = Number((await ethers.provider.getTransactionCount(deployer.address))) + (firstDeployment ? 2 : 2);
         const nonceProxyZkevm = nonceProxyBridge + 2; // Always have to redeploy impl since the polygonZkEVMGlobalExitRoot address changes
 
         const precalculateBridgeAddress = ethers.utils.getContractAddress({ from: deployer.address, nonce: nonceProxyBridge });
@@ -97,7 +97,8 @@ describe('Emergency mode test', () => {
         // deploy PolygonZkEVMBridge
         const polygonZkEVMBridgeFactory = await ethers.getContractFactory('PolygonZkEVMBridgeWrapper');
         polygonZkEVMBridgeContract = await upgrades.deployProxy(polygonZkEVMBridgeFactory, [], { initializer: false });
-
+        // console.log(polygonZkEVMBridgeContract.deployTransaction.nonce);
+        // console.log(nonceProxyBridge);
         // deploy PolygonZkEVMMock
         const PolygonZkEVMFactory = await ethers.getContractFactory('PolygonZkEVMMock');
         polygonZkEVMContract = await upgrades.deployProxy(PolygonZkEVMFactory, [], {
@@ -127,6 +128,7 @@ describe('Emergency mode test', () => {
                 trustedAggregatorTimeout: trustedAggregatorTimeoutDefault,
                 chainID,
                 forkID: 0,
+                lastVerifiedBatch: 0,
             },
             genesisRoot,
             urlSequencer,

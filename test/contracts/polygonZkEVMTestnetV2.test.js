@@ -128,6 +128,7 @@ describe('Polygon ZK-EVM TestnetV2', () => {
                 trustedAggregatorTimeout: trustedAggregatorTimeoutDefault,
                 chainID,
                 forkID,
+                lastVerifiedBatch: 0,
             },
             genesisRoot,
             urlSequencer,
