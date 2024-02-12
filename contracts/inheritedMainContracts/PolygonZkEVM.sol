@@ -383,7 +383,7 @@ contract PolygonZkEVM is
         admin = initializePackedParameters.admin;
         trustedSequencer = initializePackedParameters.trustedSequencer;
         trustedAggregator = initializePackedParameters.trustedAggregator;
-        batchNumToStateRoot[lastBatchSequenced] = genesisRoot;
+        batchNumToStateRoot[initializePackedParameters.lastVerifiedBatch] = genesisRoot;
         trustedSequencerURL = _trustedSequencerURL;
         networkName = _networkName;
         lastBatchSequenced = initializePackedParameters.lastVerifiedBatch;
