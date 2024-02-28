@@ -15,6 +15,7 @@ interface IPolygonZkEVM {
      * @param trustedAggregatorTimeout Trusted aggregator timeout
      * @param _chainID L2 chainID
      * @param _forkID Fork Id
+     * @param _lastVerifiedBatch Last verified batch
      */
     struct InitializePackedParameters {
         address admin;
@@ -24,6 +25,7 @@ interface IPolygonZkEVM {
         uint64 trustedAggregatorTimeout;
         uint64 chainID;
         uint64 forkID;
+        uint64 lastVerifiedBatch;
     }
 
     function chainID() external view returns (uint64);
