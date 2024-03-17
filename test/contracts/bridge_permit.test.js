@@ -15,7 +15,7 @@ const {
 } = require('../../src/permit-helper');
 
 function calculateGlobalExitRoot(mainnetExitRoot, rollupExitRoot) {
-    return ethers.utils.solidityKeccak256(['bytes32', 'bytes32'], [mainnetExitRoot, rollupExitRoot]);
+    return ethers.solidityPackedKeccak256(['bytes32', 'bytes32'], [mainnetExitRoot, rollupExitRoot]);
 }
 
 describe('PolygonZkEVMBridge Contract Permit tests', () => {
@@ -30,8 +30,8 @@ describe('PolygonZkEVMBridge Contract Permit tests', () => {
     const tokenName = 'Matic Token';
     const tokenSymbol = 'MATIC';
     const decimals = 18;
-    const tokenInitialBalance = ethers.utils.parseEther('20000000');
-    const metadataToken = ethers.utils.defaultAbiCoder.encode(
+    const tokenInitialBalance = ethers.parseEther('20000000');
+    const metadataToken = ethers.AbiCoder.defaultAbiCoder().encode(
         ['string', 'string', 'uint8'],
         [tokenName, tokenSymbol, decimals],
     );
@@ -44,7 +44,7 @@ describe('PolygonZkEVMBridge Contract Permit tests', () => {
     const LEAF_TYPE_ASSET = 0;
     const depositBranches = new Array(32).fill(ethers.constants.HashZero);
 
-    const polygonZkEVMAddress = ethers.constants.AddressZero;
+    const polygonZkEVMAddress = ethers.ZeroAddress;
 
     beforeEach('Deploy contracts', async () => {
         // load signers
@@ -100,12 +100,12 @@ describe('PolygonZkEVMBridge Contract Permit tests', () => {
         const depositCount = await polygonZkEVMBridgeContract.depositCount();
         const originNetwork = networkIDMainnet;
         const tokenAddress = tokenContract.address;
-        const amount = ethers.utils.parseEther('10');
+        const amount = ethers.parseEther('10');
         const destinationNetwork = networkIDRollup;
         const destinationAddress = deployer.address;
 
         const metadata = metadataToken;
-        const metadataHash = ethers.utils.solidityKeccak256(['bytes'], [metadata]);
+        const metadataHash = ethers.solidityPackedKeccak256(['bytes'], [metadata]);
 
         const balanceDeployer = await tokenContract.balanceOf(deployer.address);
         const balanceBridge = await tokenContract.balanceOf(polygonZkEVMBridgeContract.address);
@@ -132,7 +132,7 @@ describe('PolygonZkEVMBridge Contract Permit tests', () => {
 
         // user permit
         const nonce = await tokenContract.nonces(deployer.address);
-        const deadline = ethers.constants.MaxUint256;
+        const deadline = ethers.MaxUint256;
         const { chainId } = await ethers.provider.getNetwork();
 
         const { v, r, s } = await createPermitSignature(
@@ -192,20 +192,20 @@ describe('PolygonZkEVMBridge Contract Permit tests', () => {
             chainId,
         );
         await daiContract.deployed();
-        await daiContract.mint(deployer.address, ethers.utils.parseEther('100'));
+        await daiContract.mint(deployer.address, ethers.parseEther('100'));
 
         const depositCount = await polygonZkEVMBridgeContract.depositCount();
         const originNetwork = networkIDMainnet;
         const tokenAddress = daiContract.address;
-        const amount = ethers.utils.parseEther('10');
+        const amount = ethers.parseEther('10');
         const destinationNetwork = networkIDRollup;
         const destinationAddress = deployer.address;
 
-        const metadata = ethers.utils.defaultAbiCoder.encode(
+        const metadata = ethers.AbiCoder.defaultAbiCoder().encode(
             ['string', 'string', 'uint8'],
             [await daiContract.name(), await daiContract.symbol(), await daiContract.decimals()],
         );
-        const metadataHash = ethers.utils.solidityKeccak256(['bytes'], [metadata]);
+        const metadataHash = ethers.solidityPackedKeccak256(['bytes'], [metadata]);
 
         const balanceDeployer = await daiContract.balanceOf(deployer.address);
         const balanceBridge = await daiContract.balanceOf(polygonZkEVMBridgeContract.address);
@@ -232,7 +232,7 @@ describe('PolygonZkEVMBridge Contract Permit tests', () => {
 
         // user permit
         const nonce = await daiContract.nonces(deployer.address);
-        const deadline = ethers.constants.MaxUint256;
+        const deadline = ethers.MaxUint256;
 
         const { v, r, s } = await createPermitSignatureDaiType(
             daiContract,
@@ -291,20 +291,20 @@ describe('PolygonZkEVMBridge Contract Permit tests', () => {
             (await ethers.provider.getBlock()).timestamp + 1,
         );
         await uniContract.deployed();
-        await uniContract.mint(deployer.address, ethers.utils.parseEther('100'));
+        await uniContract.mint(deployer.address, ethers.parseEther('100'));
 
         const depositCount = await polygonZkEVMBridgeContract.depositCount();
         const originNetwork = networkIDMainnet;
         const tokenAddress = uniContract.address;
-        const amount = ethers.utils.parseEther('10');
+        const amount = ethers.parseEther('10');
         const destinationNetwork = networkIDRollup;
         const destinationAddress = deployer.address;
 
-        const metadata = ethers.utils.defaultAbiCoder.encode(
+        const metadata = ethers.AbiCoder.defaultAbiCoder().encode(
             ['string', 'string', 'uint8'],
             [await uniContract.name(), await uniContract.symbol(), await uniContract.decimals()],
         );
-        const metadataHash = ethers.utils.solidityKeccak256(['bytes'], [metadata]);
+        const metadataHash = ethers.solidityPackedKeccak256(['bytes'], [metadata]);
 
         const balanceDeployer = await uniContract.balanceOf(deployer.address);
         const balanceBridge = await uniContract.balanceOf(polygonZkEVMBridgeContract.address);
@@ -331,7 +331,7 @@ describe('PolygonZkEVMBridge Contract Permit tests', () => {
 
         // user permit
         const nonce = await uniContract.nonces(deployer.address);
-        const deadline = ethers.constants.MaxUint256;
+        const deadline = ethers.MaxUint256;
         const { chainId } = await ethers.provider.getNetwork();
 
         const { v, r, s } = await createPermitSignatureUniType(

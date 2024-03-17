@@ -7,7 +7,7 @@ const {
 } = require('@0xpolygonhermez/zkevm-commonjs').mtBridgeUtils;
 
 function calculateGlobalExitRoot(mainnetExitRoot, rollupExitRoot) {
-    return ethers.utils.solidityKeccak256(['bytes32', 'bytes32'], [mainnetExitRoot, rollupExitRoot]);
+    return ethers.solidityPackedKeccak256(['bytes32', 'bytes32'], [mainnetExitRoot, rollupExitRoot]);
 }
 
 describe('PolygonZkEVMBridge Mock Contract', () => {
@@ -23,8 +23,8 @@ describe('PolygonZkEVMBridge Mock Contract', () => {
     const tokenName = 'Matic Token';
     const tokenSymbol = 'MATIC';
     const decimals = 18;
-    const tokenInitialBalance = ethers.utils.parseEther('20000000');
-    const metadataToken = ethers.utils.defaultAbiCoder.encode(
+    const tokenInitialBalance = ethers.parseEther('20000000');
+    const metadataToken = ethers.AbiCoder.defaultAbiCoder().encode(
         ['string', 'string', 'uint8'],
         [tokenName, tokenSymbol, decimals],
     );
@@ -95,12 +95,12 @@ describe('PolygonZkEVMBridge Mock Contract', () => {
         const depositCount = await polygonZkEVMBridgeContract.depositCount();
         const originNetwork = networkIDMainnet;
         const tokenAddress = tokenContract.address;
-        const amount = ethers.utils.parseEther('10');
+        const amount = ethers.parseEther('10');
         const destinationNetwork = networkIDRollup;
         const destinationAddress = deployer.address;
 
         const metadata = metadataToken;
-        const metadataHash = ethers.utils.solidityKeccak256(['bytes'], [metadata]);
+        const metadataHash = ethers.solidityPackedKeccak256(['bytes'], [metadata]);
 
         const balanceDeployer = await tokenContract.balanceOf(deployer.address);
         const balanceBridge = await tokenContract.balanceOf(polygonZkEVMBridgeContract.address);
@@ -157,10 +157,10 @@ describe('PolygonZkEVMBridge Mock Contract', () => {
         expect(computedGlobalExitRoot).to.be.equal(await polygonZkEVMGlobalExitRoot.getLastGlobalExitRoot());
     });
 
-    it('shouldnt be able to PolygonZkEVMBridge more thna 0.25e ehters', async () => {
+    it('shouldnt be able to PolygonZkEVMBridge more than 0.25e ehters', async () => {
         // Add a claim leaf to rollup exit tree
-        const tokenAddress = ethers.constants.AddressZero; // ether
-        const amount = ethers.utils.parseEther('10');
+        const tokenAddress = ethers.ZeroAddress; // ether
+        const amount = ethers.parseEther('10');
         const destinationNetwork = networkIDRollup;
         const destinationAddress = deployer.address;
 
@@ -171,29 +171,29 @@ describe('PolygonZkEVMBridge Mock Contract', () => {
             tokenAddress,
             true,
             '0x',
-            { value: ethers.utils.parseEther('10') },
+            { value: ethers.parseEther('10') },
         )).to.be.revertedWith('PolygonZkEVMBridge::bridgeAsset: Cannot bridge more than maxEtherBridge');
 
         await polygonZkEVMBridgeContract.bridgeAsset(
             destinationNetwork,
             destinationAddress,
-            ethers.utils.parseEther('0.25'),
+            ethers.parseEther('0.25'),
             tokenAddress,
             true,
             '0x',
-            { value: ethers.utils.parseEther('0.25') },
+            { value: ethers.parseEther('0.25') },
         );
     });
 
     it('should claim tokens from Rollup to Rollup', async () => {
         const originNetwork = networkIDRollup;
         const tokenAddress = tokenContract.address;
-        const amount = ethers.utils.parseEther('10');
+        const amount = ethers.parseEther('10');
         const destinationNetwork = networkIDRollup;
         const destinationAddress = acc1.address;
 
         const metadata = metadataToken;
-        const metadataHash = ethers.utils.solidityKeccak256(['bytes'], [metadata]);
+        const metadataHash = ethers.solidityPackedKeccak256(['bytes'], [metadata]);
 
         // Set network to Rollup
         await polygonZkEVMBridgeContract.setNetworkID(1);
@@ -214,7 +214,7 @@ describe('PolygonZkEVMBridge Mock Contract', () => {
 
         // check merkle root with SC
         const mainnetExitRoot = merkleTree.getRoot();
-        const rollupExitRoot = ethers.constants.HashZero;
+        const rollupExitRoot = ethers.HashZero;
 
         const computedGlobalExitRoot = calculateGlobalExitRoot(mainnetExitRoot, rollupExitRoot);
         // set globalExitRoot

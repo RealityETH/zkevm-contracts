@@ -16,7 +16,7 @@ describe('Emergency mode test', () => {
 
     const maticTokenName = 'Matic Token';
     const maticTokenSymbol = 'MATIC';
-    const maticTokenInitialBalance = ethers.utils.parseEther('20000000');
+    const maticTokenInitialBalance = ethers.parseEther('20000000');
 
     const gasTokenName = 'Fork Token';
     const gasTokenSymbol = 'FORK';
@@ -78,8 +78,8 @@ describe('Emergency mode test', () => {
         const nonceProxyBridge = Number((await ethers.provider.getTransactionCount(deployer.address))) + (firstDeployment ? 2 : 2);
         const nonceProxyZkevm = nonceProxyBridge + 2; // Always have to redeploy impl since the polygonZkEVMGlobalExitRoot address changes
 
-        const precalculateBridgeAddress = ethers.utils.getContractAddress({ from: deployer.address, nonce: nonceProxyBridge });
-        const precalculateZkevmAddress = ethers.utils.getContractAddress({ from: deployer.address, nonce: nonceProxyZkevm });
+        const precalculateBridgeAddress = ethers.getContractAddress({ from: deployer.address, nonce: nonceProxyBridge });
+        const precalculateZkevmAddress = ethers.getContractAddress({ from: deployer.address, nonce: nonceProxyZkevm });
         firstDeployment = false;
 
         const PolygonZkEVMGlobalExitRootFactory = await ethers.getContractFactory('PolygonZkEVMGlobalExitRootWrapper');
@@ -141,7 +141,7 @@ describe('Emergency mode test', () => {
         );
 
         // fund sequencer address with Matic tokens
-        await maticTokenContract.transfer(trustedSequencer.address, ethers.utils.parseEther('1000'));
+        await maticTokenContract.transfer(trustedSequencer.address, ethers.parseEther('1000'));
 
         // Activate force batches
         await expect(
@@ -178,7 +178,7 @@ describe('Emergency mode test', () => {
 
         const sequence = {
             transactions: l2txData,
-            globalExitRoot: ethers.constants.HashZero,
+            globalExitRoot: ethers.HashZero,
             timestamp: ethers.BigNumber.from(currentTimestamp),
             minForcedTimestamp: 0,
         };
@@ -203,7 +203,7 @@ describe('Emergency mode test', () => {
         const newLocalExitRoot = '0x0000000000000000000000000000000000000000000000000000000000000001';
         const newStateRoot = '0x0000000000000000000000000000000000000000000000000000000000000001';
         const numBatch = (await polygonZkEVMContract.lastVerifiedBatch()).toNumber() + 1;
-        const zkProofFFlonk = new Array(24).fill(ethers.constants.HashZero);
+        const zkProofFFlonk = new Array(24).fill(ethers.HashZero);
         const pendingStateNum = 0;
 
         await expect(
@@ -218,8 +218,8 @@ describe('Emergency mode test', () => {
         ).to.be.revertedWith('OnlyNotEmergencyState');
 
         // Check PolygonZkEVMBridge no PolygonZkEVMBridge is in emergency state also
-        const tokenAddress = ethers.constants.AddressZero;
-        const amount = ethers.utils.parseEther('10');
+        const tokenAddress = ethers.ZeroAddress;
+        const amount = ethers.parseEther('10');
         const destinationNetwork = 1;
         const destinationAddress = deployer.address;
 
@@ -239,9 +239,9 @@ describe('Emergency mode test', () => {
             '0x',
         )).to.be.revertedWith('OnlyNotEmergencyState');
 
-        const proof = Array(32).fill(ethers.constants.HashZero);
+        const proof = Array(32).fill(ethers.HashZero);
         const index = 0;
-        const root = ethers.constants.HashZero;
+        const root = ethers.HashZero;
 
         await expect(polygonZkEVMBridgeContract.claimAsset(
             proof,
